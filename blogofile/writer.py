@@ -49,14 +49,14 @@ class Writer(object):
         self.bf = cache.bf
         self.bf.writer = self
         self.bf.logger = logger
-            
+
     def write_site(self):
         self.__setup_output_dir()
         self.__load_bf_cache()
         self.__init_filters_controllers()
         self.__run_controllers()
         self.__write_files()
-            
+
     def __setup_output_dir(self):
         """Setup the staging directory"""
         import sys
@@ -67,16 +67,19 @@ class Writer(object):
             # So this just deletes the *contents* of output_dir
             for f in os.listdir(self.output_dir):
                 f = util.path_join(self.output_dir, f)
-                try:
-                    os.remove(f)
-                except OSError:
-                    pass
-                try:
-                    shutil.rmtree(f)
-                except OSError:
-                    pass
+                if util.should_keep_path(f):
+                    logger.debug("Ignoring directory: " + f)
+                else:
+                    try:
+                        os.remove(f)
+                    except OSError:
+                        pass
+                    try:
+                        shutil.rmtree(f)
+                    except OSError:
+                        pass
         util.mkdir(self.output_dir)
-            
+
     def __write_files(self):
         """Write all files for the blog to _site
 
@@ -128,11 +131,11 @@ class Writer(object):
         #Run filter/controller defined init methods
         filter.init_filters()
         controller.init_controllers()
-        
+
     def __run_controllers(self):
         """Run all the controllers in the _controllers directory"""
         controller.run_all()
-        
+
     def template_render(self, template, attrs={}):
         """Render a template"""
         #Create a context object that is fresh for each template render

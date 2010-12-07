@@ -49,6 +49,16 @@ def recompile():
         else:
             #p could just be a pre-compiled regex
             site.compiled_file_ignore_patterns.append(p)
+
+    site.compiled_file_keep_patterns = []
+    for p in site.file_keep_patterns:
+        if isinstance(p, basestring):
+            site.compiled_file_keep_patterns.append(
+                re.compile(p, re.IGNORECASE))
+        else:
+            #p could just be a pre-compiled regex
+            site.compiled_file_keep_patterns.append(p)
+
     import urlparse
     global blog
     blog.url = urlparse.urljoin(site.url, blog.path)

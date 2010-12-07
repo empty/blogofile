@@ -36,6 +36,14 @@ def should_ignore_path(path):
             return True
     return False
 
+def should_keep_path(path):
+    """See if a given path matches the ignore patterns"""
+    if os.path.sep == '\\':
+        path = path.replace('\\', '/')
+    for p in bf.config.site.compiled_file_keep_patterns:
+        if p.match(path):
+            return True
+    return False
 
 def mkdir(newdir):
     """works the way a good mkdir should :)
